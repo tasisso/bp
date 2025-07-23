@@ -19,6 +19,7 @@ DEFAULT_FORECAST_DURATION = 0.0 #seconds
 DEFAULT_SPATIAL_LENGTH = 0.25 #meters
 DEFAULT_M = 64 # spatial sampling
 
+
 # %% basic dataset
 class WaveformDataset(Dataset):
     def __init__(self, data_tensor, dt=0.01):
@@ -168,8 +169,10 @@ class StreamingArrowWaveformDataset(IterableDataset):
                             if not self.validate_chunk_fn(chunk):
                                 continue
                             
+                            #chunk: [------------------ total_size --------------------]
+                            #       [---- input_chunk ----] [--- if forecast target ---]
 
-                            input_chunk = chunk.slice(0, chunk_size) # input chunk is first time only
+                            input_chunk = chunk.slice(0, chunk_size) # input chunk is first portion of window
 
                             if "II" in self.input_signals:
                                 omega_default = 2 * math.pi * 75 / 60
